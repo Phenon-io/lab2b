@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PBX Emulator</title>
+        <style>
+            p { font-size: 15px; }
+            .block { width: 60px; height: 40px; margin: 2px; font-size: 14px; }
+            #txt { margin-bottom: 10px; padding: 5px; font-size: 16px; width: 190px; }
+            #btn { padding: 8px 15px; font-size: 15px; }
+            #pl { margin-top: 10px; font-weight: bold; }
+            .error { color: red; }
+            .success { color: green; }
+            table { border-collapse: collapse; }
+            td { padding: 2px; }
+        </style>
+    </head>
+    <body>
+        <p>PBX Emulator </p>
+        <input type= "text" id= "txt" value="" readonly>
+        <input type= "button" id= "btn" value="Dial" onClick="toggleBtn()">
+        <p id= pl>Press Dial to start dialing</p>
+        <table>
+            <tr>
+                <td><input type = "button" class ="block" value= "1" onclick="enterNumber('1')"></td>
+                <td><input type = "button" class ="block" value= "2 ABC" onclick="enterNumber('2')"></td>
+                <td><input type = "button" class ="block" value= "3 DEF" onclick="enterNumber('3')"></td>
+            </tr>
+            <tr>
+                <td><input type = "button" class ="block" value= "4 GHI" onclick="enterNumber('4')"></td>
+                <td><input type = "button" class ="block" value= "5 JKL" onclick="enterNumber('5')"></td>
+                <td><input type = "button" class ="block" value= "6 MNO" onclick="enterNumber('6')"></td>
+            </tr>
+            <tr>
+                <td><input type = "button" class ="block" value= "7 PQRS" onclick="enterNumber('7')"></td>
+                <td><input type = "button" class ="block" value= "8 TUV" onclick="enterNumber('8')"></td>
+                <td><input type = "button" class ="block" value= "9 WXYZ" onclick="enterNumber('9')"></td>
+            </tr>
+            <tr>
+                <td><input type = "button" class ="block" value= "*" onclick="enterNumber('*')"></td>
+                <td><input type = "button" class ="block" value= "0" onclick="enterNumber('0')"></td>
+                <td><input type = "button" class ="block" value= "#" onclick="enterNumber('#')"></td>
+            </tr>
+            <tr>
+                <td colspan="3"><input type = "button" class ="block" style = "width:100%" value= "Clear" onclick="enterNumber('clear')"></td>
+            </tr>
+        </table>
+
+        <script>
+            var valid_entry = false;
+            const btn = document.getElementById("btn");
+            const txt = document.getElementById("txt");
+            const pl = document.getElementById("pl");
+            //const allowed_chars = ""
+            // Did Regex instead
+            btn.disabled = false;
+            txt.disabled = true;
+            disableKeypad(true);
+
+            function disableKeypad(truefalse){
+                const buttonsToModify = document.querySelectorAll('table input[type="button"]:not([value="Clear"])');
+                buttonsToModify.forEach(
+                    button => {button.disabled = truefalse;}
+                );
+            }
+
+            function toggleBtn() {
+                if(btn.value == "Dial" && !btn.disabled){
+                    btn.disabled = true;
+                    txt.disabled = false;
+                    txt.value = '';
+                    disableKeypad(false);
+                    pl.innerHTML = "Dial Started";
+                }
+                else if(btn.value == "Call"){
+                    if(valid_entry){
+                        btn.disabled = true;
+                        pl.innerHTML = "Call to " + txt.value + " was successful";
+                        btn.disabled = false;
+                        setTimeout(() => {
+                            txt.disabled = false;
+                            txt.value = '';
+                            btn.value = "Dial";
+                            valid_entry = false;
+                            pl.innerHTML = "Press Dial to start dialing";
+                        }, 2000);
+                    }
+                    else{
+                        pl.innerHTML = "Please enter a valid phone number"
+                        btn.disabled = false;
+                        txt.disabled = false;
+                        txt.value = '';
+                        btn.value = "Dial";
+                        valid_entry = false;
+                        
+                        pl.innerHTML = "Press Dial to start dialing";
+                    }
+                }
+            }
+            function enterNumber(x){
+                if(x == 'clear'){
+                    txt.value = "";
+                    disableKeypad(true);
+                    btn.value = "Dial";
+                    pl.innerHTML = "Press Dial to start dialing";
+                    btn.disabled = false;
+                    valid_entry = false;
+                    return;
+                }
+                else txt.value += x;
+                
+                if(checkValidNumber()){
+                    btn.value = "Call";
+                    valid_entry = true; 
+                    btn.disabled = false;
+                    if(txt.value.length >= 10){
+                    pl.innerHTML = 'Valid 10 digit code accepted, press Call'
+                    txt.disabled = true;
+                    disableKeypad(true);
+                    }
+                    else if(txt.value.length == 7){
+                        pl.innerHTML = 'Valid 7 digit entered, continue entry for 10 digits or Call'
+                    }
+                    else if(txt.value.length == 5){
+                        pl.innerHTML = 'Valid 4 digit entered, continue entry for 7 digits or Call'
+                    }
+                    else if(txt.value.length == 1){
+                        pl.innerHTML = 'Operator'
+                    }
+                }
+                
+            }
+            function checkValidNumber(){
+                const phoneNumber = txt.value;
+                // regex catches required cases (1 (for 0) or 5 or 7 or 10 digit codes)
+                const numRegex = /^0$|^[24]\d{4}$|^(?!1)\d{7}$|^(?!1)\d{10}$/;
+                return numRegex.test(phoneNumber);
+            }
+
+        </script>
+    </body>
+</html>
