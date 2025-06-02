@@ -15,7 +15,6 @@
         </style>
     </head>
     <body>
-        <title>PBX</title>
         <p>PBX Emulator </p>
         <input type= "text" id= "txt" value="" readonly>
         <input type= "button" id= "btn" value="Dial" onClick="toggleBtn()">
@@ -53,8 +52,8 @@
             const pl = document.getElementById("pl");
             //const allowed_chars = ""
             // Did Regex instead
+            btn.disabled = false;
             txt.disabled = true;
-
             disableKeypad(true);
 
             function disableKeypad(truefalse){
@@ -66,32 +65,30 @@
 
             function toggleBtn() {
                 if(btn.value == "Dial" && !btn.disabled){
-                    btn.disabled = false;
+                    btn.disabled = true;
                     txt.disabled = false;
-                    enterNumber('clear');
+                    txt.value = '';
                     disableKeypad(false);
                     pl.innerHTML = "Dial Started";
                 }
                 else if(btn.value == "Call"){
                     if(valid_entry){
-                        if(checkValidNumber()){
-                            btn.disabled = true;
-                            pl.innerHTML = "Call to " + txt.value + " was successful";
-                            btn.disabled = false;
-                            setTimeout(() => {
-                                txt.disabled = false;
-                                enterNumber('clear');
-                                btn.value = "Dial";
-                                valid_entry = false;
-                                pl.innerHTML = "Press Dial to start dialing";
-                            }, 2000);
-                        }
+                        btn.disabled = true;
+                        pl.innerHTML = "Call to " + txt.value + " was successful";
+                        btn.disabled = false;
+                        setTimeout(() => {
+                            txt.disabled = false;
+                            txt.value = '';
+                            btn.value = "Dial";
+                            valid_entry = false;
+                            pl.innerHTML = "Press Dial to start dialing";
+                        }, 2000);
                     }
                     else{
                         pl.innerHTML = "Please enter a valid phone number"
                         btn.disabled = false;
                         txt.disabled = false;
-                        enterNumber('clear');
+                        txt.value = '';
                         btn.value = "Dial";
                         valid_entry = false;
                         
@@ -105,21 +102,31 @@
                     disableKeypad(true);
                     btn.value = "Dial";
                     pl.innerHTML = "Press Dial to start dialing";
+                    btn.disabled = false;
+                    valid_entry = false;
                     return;
                 }
                 else txt.value += x;
                 
-                if(txt.value.length == 9){
+                if(checkValidNumber() && txt.value.length >= 10){
+                    pl.innerHTML = 'Valid 10 digit code accepted, press Call'
                     txt.disabled = true;
+                    btn.value = "Call"; //redundant
+                    valid_entry = true; //redundant
+                    disableKeypad(true);
+                    btn.disabled = false;    //redundant
+                }
+                else if(checkValidNumber() && txt.value.length == 7){
+                    pl.innerHTML = 'Valid 7 digit entered, continue entry for 10 digits or Call'
                     btn.value = "Call";
                     valid_entry = true;
-                    disableKeypad(true);
+                    btn.disabled = false;
                 }
             }
             function checkValidNumber(){
                 const phoneNumber = txt.value;
-                // 9 digits for this regex. Do | with {7} or {10} if desired, but remove valid_entry check
-                const numRegex = /^\d{9}$/;
+                // regex catches required cases (1 (for 0) or 4 or 7 or 10 digit codes)
+                const numRegex = /^0$|^[24]\d{4}$|^(?!1)\d{7}$|^(?!1)\d{10}$/;
                 return numRegex.test(phoneNumber);
             }
 
