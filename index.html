@@ -108,24 +108,30 @@
                 }
                 else txt.value += x;
                 
-                if(checkValidNumber() && txt.value.length >= 10){
+                if(checkValidNumber()){
+                    btn.value = "Call";
+                    valid_entry = true; 
+                    btn.disabled = false;
+                    if(txt.value.length >= 10){
                     pl.innerHTML = 'Valid 10 digit code accepted, press Call'
                     txt.disabled = true;
-                    btn.value = "Call"; //redundant
-                    valid_entry = true; //redundant
                     disableKeypad(true);
-                    btn.disabled = false;    //redundant
+                    }
+                    else if(txt.value.length == 7){
+                        pl.innerHTML = 'Valid 7 digit entered, continue entry for 10 digits or Call'
+                    }
+                    else if(txt.value.length == 5){
+                        pl.innerHTML = 'Valid 4 digit entered, continue entry for 7 digits or Call'
+                    }
+                    else if(txt.value.length == 1){
+                        pl.innerHTML = 'Operator'
+                    }
                 }
-                else if(checkValidNumber() && txt.value.length == 7){
-                    pl.innerHTML = 'Valid 7 digit entered, continue entry for 10 digits or Call'
-                    btn.value = "Call";
-                    valid_entry = true;
-                    btn.disabled = false;
-                }
+                
             }
             function checkValidNumber(){
                 const phoneNumber = txt.value;
-                // regex catches required cases (1 (for 0) or 4 or 7 or 10 digit codes)
+                // regex catches required cases (1 (for 0) or 5 or 7 or 10 digit codes)
                 const numRegex = /^0$|^[24]\d{4}$|^(?!1)\d{7}$|^(?!1)\d{10}$/;
                 return numRegex.test(phoneNumber);
             }
