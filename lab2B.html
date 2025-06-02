@@ -4,13 +4,53 @@
         <title>PBX</title>
         <style>p {font-size:15px;}</style>
         <script>
+            var valid_entry = false;
+            const btn = document.getElementById("btn");
+            const txt = document.getElementById("txt");
+            const pl = document.getElementById("pl");
+
+            const allowed_chars = ""
             function toggleBtn() {
-                var btn = document.getElementById("btn");
-                btn.value = (btn.value.charAt(0)=="D" ? "Call" : "Dial");
+                if(btn.value == "Dial" && !btn.disabled){
+                    btn.disabled = false;
+                    txt.disabled = false;
+                    pl.innerHTML = "";
+                }
+                elseif(btn.value == "Call"){
+                    if(valid_entry){
+                        success = checkValidNumber();
+                        if(success){
+                            pl.innerHTML = "Call was successful"
+                        }
+                    }
+                    else{}
+                }
             }
+
         </script>
         <p>PBX Emulator </p>
         <input type=text id=txt value="">
         <input type=button id=btn value="Dial" onClick="toggleBtn()">
+
+        <tr>
+            <td><input type = "button" class ="block" value= "1" onclick="enterNumber('1')"></td>
+            <td><input type = "button" class ="block" value= "2 ABC" onclick="enterNumber('2')"></td>
+            <td><input type = "button" class ="block" value= "3 DEF" onclick="enterNumber('3')"></td>
+        </tr>
+        <tr>
+            <td><input type = "button" class ="block" value= "1" onclick="enterNumber('1')"></td>
+            <td><input type = "button" class ="block" value= "2 ABC" onclick="enterNumber('2')"></td>
+            <td><input type = "button" class ="block" value= "3 DEF" onclick="enterNumber('3')"></td>
+        </tr>
+        <tr>
+            <td><input type = "button" class ="block" value= "1" onclick="enterNumber('1')"></td>
+            <td><input type = "button" class ="block" value= "2 ABC" onclick="enterNumber('2')"></td>
+            <td><input type = "button" class ="block" value= "3 DEF" onclick="enterNumber('3')"></td>
+        </tr>
+        <tr>
+            <td><input type = "button" class ="block" value= "1" onclick="enterNumber('1')"></td>
+            <td><input type = "button" class ="block" value= "2 ABC" onclick="enterNumber('2')"></td>
+            <td><input type = "button" class ="block" value= "3 DEF" onclick="enterNumber('3')"></td>
+        </tr>
     </head>
 </html>
